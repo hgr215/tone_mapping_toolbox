@@ -16,12 +16,11 @@ function out_gray = llf_tone(gray_in, gain, dbg_path)
     base = llf(gray_in, sigmas, facts, N, fact_per_l, dbg_path);
     detail = gray_in - base;
 
-    base_tone = glb_tone(base, gain);
+    base_tone = glb_tone(base, gain, dbg_path);
 
     switch (method)
     case 1
         % apply on base
-        figshow(base_tone);
         out_gray = base_tone + detail .* detail_gain;
     case 2
         % apply on gray in

@@ -12,9 +12,9 @@ function gray_out = dgain_tone(gray_in, gain, dbg_path)
     % in_out = clip(lin_out, 0, 1);
     gray_out = do_srgb_gam(in_out);
     
-    % 在需要保存调试信息的位置加入：
+    % Add debug output here if needed:
     if ~isempty(dbg_path)
-        % imwrite 或其他调试输出
+        % imwrite or other debug output
     end
 end
 

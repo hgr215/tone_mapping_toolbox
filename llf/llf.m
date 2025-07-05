@@ -62,7 +62,6 @@ function F = llf(I, sigmas, facts, N, fact_per_l, dbg_path)
             output_laplace_pyr{level} = output_laplace_pyr{level} + ...
                 fact_per_l(level) * mask .* temp_laplace_pyr{level} .* weight;
         end
-        debugg = 1;
 
         % Debug: plot remap curve
         if exist('dbg_path', 'var') && ~isempty(dbg_path)

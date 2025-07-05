@@ -1,6 +1,6 @@
 function y = guiran_curve(sigma, fact, N, ref)
     I = linspace(0, 1, N);
-    zero_point = 0.5; % 可根据需要调整
+    zero_point = 0.5; % change by need
 
     I_ori = fact * I .* exp(-I.^2 ./ (2 * sigma^2));
 

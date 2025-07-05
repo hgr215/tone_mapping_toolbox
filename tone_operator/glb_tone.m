@@ -11,14 +11,21 @@ function gray_out = glb_tone(gray_in, gain, dbg_path)
     x = linspace(0, 1, 257);
 
     knee_srgb = do_srgb_degam(0.5);
-    fprintf('knee point %f', knee_srgb);
+    fprintf('knee point %f\n', knee_srgb);
     curve = glb_shadow_curve(gain, 257, knee_srgb);
 
     out_lin = interp1_clip(x, curve, in_lin);
     gray_out = do_srgb_gam(out_lin);
     
-    if ~isempty(dbg_path)
-        % imwrite 或其他调试输出
+    if exist('dbg_path', 'var') && ~isempty(dbg_path)
+        fig = figure('Visible', 'off');
+        I_axis = linspace(0, 1, length(curve));
+        plot(I_axis, curve);
+        axis([0, 1, 0, 1]);
+        title('GLB Curve');
+        xlabel('I'); ylabel('GLB Curve');
+        saveas(fig, fullfile(dbg_path, 'glb_curve.png'));
+        close(fig);
     end
 end
 

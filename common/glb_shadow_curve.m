@@ -14,5 +14,4 @@ function curve = glb_shadow_curve(gain, num, knee_point)
     curvey = [curvey, 1.0];
     axis_x = linspace(0, 1, num);
     curve = interp1_clip(curvex, curvey, axis_x);
-    figplot(axis_x, curve); hold on; plot(axis_x, axis_x, '--');
 end
