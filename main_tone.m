@@ -4,6 +4,7 @@ close all; clear;
 addpath('common');
 addpath('llf');
 addpath('tone_operator');
+addpath('grid3d');
 
 directory_path = 'data';
 % sz = [11664,  8750];  % w, h
@@ -11,14 +12,15 @@ sz = [2048, 1536];
 shadow_gain = 4.0;
 enable_dbg = 1; % save curve, middle res to files. If want to clock running time, close it.
 
-gf_us_en = 1;   % use guided filter to accelerate tone mapping. scale means do tone mapping on ds image
+gf_us_en = 0;   % use guided filter to accelerate tone mapping. scale means do tone mapping on ds image
 
 % method list
-method = 'llf';
+% method = 'llf';
 % method = 'glb';
 % method = 'dgain';
 % method = 'gf';
 % method = 'no_tone';
+method = '3dgrid';
 
 %% 
 raw_files = dir(fullfile(directory_path, '*.raw'))';
@@ -33,7 +35,7 @@ if ~exist(output_dir, 'dir')
     mkdir(output_dir);
 end
 
-for i = 1:length(files)
+for i = 2:2(files)
 % for i = 2:2
     raw_file_path = fullfile(directory_path, files(i).name);
     disp(['Processing file: ', files(i).name]);
@@ -62,6 +64,8 @@ for i = 1:length(files)
             handle = @(gray_in, gain, dbg) dgain_tone(gray_in, gain, dbg);
         case 'gf'
             handle = @(gray_in, gain, dbg) guided_filter_tone(gray_in, gain, dbg);
+        case '3dgrid'
+            handle = @(gray_in, gain, dbg) grid3d_tone(gray_in, gain, dbg);
         case 'notone'
             handle = @(gray_in, gain, dbg) no_tone(gray_in, gain, dbg);
         otherwise
@@ -117,19 +121,21 @@ function [rgb_out, rgb_ds] = do_shadow_gain_hue_protect(file_path, f, gain, w, h
     t_start     = tic;
     if gf_us_en
         scale           = 4;  % do tone mapping on ds 4 image
+        eps_gf             = 0.00000001;
+        radius          = 5;
         gray_in_ds      = imresize(gray_image, 1 / scale, "bilinear");
         gray_out_ds     = f(gray_in_ds, gain, dbg_path);  % grayin / out is gamma domain
 
         % test debug
-        gray_out        = guided_filter_upsampling(gray_in_ds, gray_out_ds, gray_image, 3, 0.00000001, dbg_path);
+        gray_out        = guided_filter_upsampling(gray_in_ds, gray_out_ds, gray_image, radius, eps_gf, dbg_path);
 
         if exist('dbg_path', 'var') && ~isempty(dbg_path)
             % save I_remap
-            imwrite(gray_image,                                 fullfile(dbg_path, 'gray_in_full.jpg'));
-            imwrite(gray_in_ds,                                 fullfile(dbg_path, 'gray_in_ds.jpg'));
-            imwrite(gray_out_ds,                                fullfile(dbg_path, 'gray_out_ds.jpg'));
-            imwrite(imresize(gray_out_ds, scale, "bilinear"),   fullfile(dbg_path, 'gray_out_dsus.jpg'));
-            imwrite(gray_out,                                   fullfile(dbg_path, 'gray_out_gfus.jpg'));
+            imwrite(gray_image,                                 fullfile(dbg_path, 'gray_in_full.jpg'),  'quality', 99);
+            imwrite(gray_in_ds,                                 fullfile(dbg_path, 'gray_in_ds.jpg'),    'quality', 99);
+            imwrite(gray_out_ds,                                fullfile(dbg_path, 'gray_out_ds.jpg'),   'quality', 99);
+            imwrite(imresize(gray_out_ds, scale, "bilinear"),   fullfile(dbg_path, 'gray_out_dsus.jpg'), 'quality', 99);
+            imwrite(gray_out,                                   fullfile(dbg_path, 'gray_out_gfus.jpg') ,'quality', 99);
             
             % save GT gray:
             % gray_out_full = f(gray_image, gain, '');
