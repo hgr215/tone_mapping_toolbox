@@ -83,7 +83,7 @@ function base = grid3d_core(gray_in, params, dbg_path)
     end
     figplot(kz);
     kernel_xy_1d = kernel_xy(8,:) / sum(kernel_xy(8,:));
-    % figplot(kernel_xy_1d)
+    figplot(kernel_xy_1d)
 
     test_2 = squeeze(grid(8,8,:,1));
     % figure;
