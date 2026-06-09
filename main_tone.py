@@ -6,6 +6,7 @@ from glob import glob
 from scipy.io import loadmat
 from skimage.color import rgb2gray
 from tone_operator.glb_tone import glb_tone
+from tone_operator.ald_tone import ald_tone
 from common.do_srgb_degam import do_srgb_degam
 from common.do_srgb_gam import do_srgb_gam
 from common.clip import clip
@@ -127,6 +128,8 @@ if __name__ == '__main__':
             handle = grid3d_tone
         elif method == 'notone':
             handle = no_tone
+        elif method == 'ald':
+            handle = ald_tone
         else:
             raise ValueError(f'Unknown method: {method}')
 

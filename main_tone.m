@@ -16,11 +16,12 @@ gf_us_en = 0;   % use guided filter to accelerate tone mapping. scale means do t
 
 % method list
 % method = 'llf';
-method = 'glb';
+% method = 'glb';
 % method = 'dgain';
 % method = 'gf';
 % method = 'no_tone';
 % method = '3dgrid';
+method = 'ald';
 
 %% 
 raw_files = dir(fullfile(directory_path, '*.raw'))';
@@ -68,6 +69,8 @@ for i = 2:2(files)
             handle = @(gray_in, gain, dbg) grid3d_tone(gray_in, gain, dbg);
         case 'notone'
             handle = @(gray_in, gain, dbg) no_tone(gray_in, gain, dbg);
+        case 'ald'
+            handle = @(gray_in, gain, dbg) ald_tone(gray_in, gain, dbg);
         otherwise
             error(['Unknown method: ', method]);
     end
